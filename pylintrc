@@ -1,0 +1,7 @@
+[MASTER]
+output-format = colorized
+max-line-length = 120
+fail-under = 9.5
+
+[MESSAGES CONTROL]
+disable = missing-module-docstring, missing-class-docstring, missing-function-docstring

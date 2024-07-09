@@ -1,0 +1,6 @@
+selenium ~= 4.21.0
+requests ~= 2.32.2
+cx_Freeze ~= 7.0.0
+
+pytest ~= 8.2.1
+pylint ~= 3.2.2
