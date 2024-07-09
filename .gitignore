@@ -1,0 +1,8 @@
+.idea/
+.run/
+.venv*/
+build/
+__pycache__/
+
+*.pyc
+VERSION
