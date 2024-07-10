@@ -1,0 +1,32 @@
+# Action to build and attach cx_Freeze packages to project releases.
+name: release-packaging
+
+# Run anytime a tag is pushed, either manually or via a release publish.
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  create-release-packages:
+    name: Create package for ${{ matrix.os_name }}
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: cx_Freeze build
+        run: |
+          python build_project.py build
+      - name: Upload packages to release
+        uses: actions/upload-artifact@v4
+        with:
+          name: "interflex_work_clock_v${{ github.ref_name }}"
+          path: "build/interflex_work_clock_v${{ github.ref_name }}"
