@@ -1,0 +1,39 @@
+# Running unit tests and linting over the project
+name: test_and_lint
+
+# Run on any pushed
+on: push
+
+jobs:
+  run-pytest:
+    name: Run pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+      - name: Update pip
+        run: python -m pip install --upgrade pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run pytest
+        run: python -m pytest
+  run-pylint:
+    name: Run pylint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+      - name: Update pip
+        run: python -m pip install --upgrade pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run pylint
+        run: python -m pylint work_clock
