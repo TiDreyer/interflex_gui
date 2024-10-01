@@ -98,7 +98,7 @@ class SeleniumTimeBooker:
         login_button = await self.__get_element_once_present(By.CLASS_NAME, 'iflxButtonFactoryTextContainerOuter')
         login_button.click()
 
-    async def __get_element_once_present(self, by: By, value: str, multiple: bool = False) -> Any:
+    async def __get_element_once_present(self, by: str, value: str, multiple: bool = False) -> Any:
         logging.info(f"Waiting for {repr(by)} = '{value}' to be present")
         locator = (by, value)
         await asyncio.sleep(0.01)  # minimum wait time
