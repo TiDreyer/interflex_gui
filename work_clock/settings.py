@@ -1,3 +1,4 @@
+from enum import Enum
 import json
 from pathlib import Path
 from platform import system
@@ -6,14 +7,21 @@ from typing import Optional
 from work_clock import APP_NAME_CODE
 
 
+class DriverType(Enum):
+    edge = 'Microsoft Edge'
+    firefox = 'Mozilla Firefox'
+    chrome = 'Google Chrome'
+
+
 class UserSettings:
     def __init__(self):
         self._base_url: Optional[str] = None
         self._employee_id: Optional[int] = None
         self._employee_pin: Optional[int] = None
-        self._today_in_saldo: Optional[bool] = None
-        self._hours_per_day: Optional[float] = None
-        self._debug_mode: Optional[bool] = None
+        self._today_in_saldo: bool = False
+        self._hours_per_day: float = 7.0
+        self._debug_mode: bool = False
+        self._webdriver: str = DriverType.edge.value
 
         self.load()
 
@@ -40,6 +48,7 @@ class UserSettings:
             'today_in_saldo': self._today_in_saldo,
             'hours_per_day': self._hours_per_day,
             'debug_mode': self._debug_mode,
+            'webdriver': self._webdriver,
         }
         settings_json = json.dumps(settings)
         with open(self.setting_file_path(), 'w') as settings_file:
@@ -53,9 +62,10 @@ class UserSettings:
         self._base_url = settings_json.get('base_url', None)
         self._employee_id = settings_json.get('employee', {}).get('id', None)
         self._employee_pin = settings_json.get('employee', {}).get('pin', None)
-        self._today_in_saldo = settings_json.get('today_in_saldo', None)
-        self._hours_per_day = settings_json.get('hours_per_day', None)
-        self._debug_mode = settings_json.get('debug_mode', None)
+        self._today_in_saldo = settings_json.get('today_in_saldo', self._today_in_saldo)
+        self._hours_per_day = settings_json.get('hours_per_day', self._hours_per_day)
+        self._debug_mode = settings_json.get('debug_mode', self._debug_mode)
+        self._webdriver = settings_json.get('webdriver', self._webdriver)
 
     @property
     def base_url(self) -> str:
@@ -87,7 +97,7 @@ class UserSettings:
         self.save()
 
     @property
-    def today_in_saldo(self) -> Optional[bool]:
+    def today_in_saldo(self) -> bool:
         return self._today_in_saldo
 
     @today_in_saldo.setter
@@ -96,7 +106,7 @@ class UserSettings:
         self.save()
 
     @property
-    def hours_per_day(self) -> Optional[float]:
+    def hours_per_day(self) -> float:
         return self._hours_per_day
 
     @hours_per_day.setter
@@ -105,12 +115,21 @@ class UserSettings:
         self.save()
 
     @property
-    def debug_mode(self) -> Optional[bool]:
+    def debug_mode(self) -> bool:
         return self._debug_mode
 
     @debug_mode.setter
     def debug_mode(self, debug_mode: bool) -> None:
         self._debug_mode = debug_mode
+        self.save()
+
+    @property
+    def webdriver(self) -> DriverType:
+        return DriverType(self._webdriver)
+
+    @webdriver.setter
+    def webdriver(self, webdriver: DriverType) -> None:
+        self._webdriver = webdriver.value
         self.save()
 
 

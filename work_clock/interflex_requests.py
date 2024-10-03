@@ -10,7 +10,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import wait, expected_conditions
 
-from work_clock.settings import SETTINGS
+from work_clock.settings import SETTINGS, DriverType
 from work_clock.time_evaluation import TimeBookingList, BookingTime
 
 
@@ -83,10 +83,24 @@ class SeleniumTimeBooker:
         return bookings
 
     async def _init_driver(self):
-        options = webdriver.EdgeOptions()
-        if not self.debug_mode:
-            options.add_argument('--headless=new')
-        self.driver = webdriver.Edge(options=options)
+        match SETTINGS.webdriver:
+            case DriverType.edge:
+                options = webdriver.EdgeOptions()
+                if not self.debug_mode:
+                    options.add_argument('--headless')
+                self.driver = webdriver.Edge(options=options)
+            case DriverType.firefox:
+                options = webdriver.FirefoxOptions()
+                if not self.debug_mode:
+                    options.add_argument('-headless')
+                self.driver = webdriver.Firefox(options=options)
+            case DriverType.chrome:
+                options = webdriver.ChromeOptions()
+                if not self.debug_mode:
+                    options.add_argument('--headless')
+                self.driver = webdriver.Chrome(options=options)
+            case _:
+                raise NotImplementedError(f"Webdriver '{SETTINGS.webdriver}' is not implemented")
 
     async def _login(self):
         logging.info("Logging in to the web interface")
@@ -98,7 +112,7 @@ class SeleniumTimeBooker:
         login_button = await self.__get_element_once_present(By.CLASS_NAME, 'iflxButtonFactoryTextContainerOuter')
         login_button.click()
 
-    async def __get_element_once_present(self, by: By, value: str, multiple: bool = False) -> Any:
+    async def __get_element_once_present(self, by: str, value: str, multiple: bool = False) -> Any:
         logging.info(f"Waiting for {repr(by)} = '{value}' to be present")
         locator = (by, value)
         await asyncio.sleep(0.01)  # minimum wait time

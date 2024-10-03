@@ -8,7 +8,7 @@ from selenium.common import WebDriverException
 
 from work_clock import APP_NAME, APP_VERSION
 from work_clock.logic import ClockState
-from work_clock.settings import SETTINGS
+from work_clock.settings import SETTINGS, DriverType
 
 
 @dataclass
@@ -42,7 +42,6 @@ class TimeBookingUi:
 
     def _create_window(self):
         self.root = tk.Tk()
-        self.root.geometry('280x120')
         self.root.resizable(False, False)
         self.root.winfo_toplevel().title(APP_NAME + " " + APP_VERSION)
 
@@ -182,6 +181,7 @@ class UiLabelsSettings:
     hours_per_day: str = ""
     today_in_saldo: str = ""
     debug_mode: str = ""
+    webdriver: Optional[tk.StringVar] = None
 
 
 class SettingsUi:
@@ -193,12 +193,13 @@ class SettingsUi:
 
     def _create_window(self):
         self.root = tk.Tk()
-        self.root.geometry('300x180')
         self.root.resizable(False, False)
         self.root.winfo_toplevel().title(APP_NAME + " Settings")
 
         self.content = ttk.Frame(self.root, padding=10)
         self.content.grid(column=0, row=0, sticky=tk.N + tk.S + tk.E + tk.W)
+
+        self._label.webdriver = tk.StringVar(master=self.root, value=SETTINGS.webdriver.value)
 
         self._fill_window()
 
@@ -224,6 +225,8 @@ class SettingsUi:
 
         self._label.today_in_saldo = bool_label(SETTINGS.today_in_saldo)
         self._label.debug_mode = bool_label(SETTINGS.debug_mode)
+        if not self._label.webdriver is None:
+            self._label.webdriver.set(SETTINGS.webdriver.value)
 
     def _fill_window(self):
         parent = self.content
@@ -259,6 +262,13 @@ class SettingsUi:
         ttk.Label(parent, text="Set Debug Mode").grid(row=row, column=0, sticky=sticky)
         ttk.Button(parent, text=self._label.debug_mode, command=self._button_set_debug_mode
                    ).grid(row=row, column=1, sticky=sticky)
+
+        row += 1
+        ttk.Label(parent, text="Web Driver:").grid(row=row, column=0, sticky=sticky)
+        driver_options = ttk.Combobox(parent, textvariable=self._label.webdriver)
+        driver_options.bind(sequence='<<ComboboxSelected>>', func=self._combo_set_driver)
+        driver_options.grid(row=row, column=1, sticky=sticky)
+        driver_options['values'] = [driver.value for driver in DriverType]
 
         self.root.update()
 
@@ -296,7 +306,6 @@ class SettingsUi:
 
     def _button_today_in_saldo(self):
         match SETTINGS.today_in_saldo:
-            case None: SETTINGS.today_in_saldo = True
             case True: SETTINGS.today_in_saldo = False
             case False: SETTINGS.today_in_saldo = True
         self._update_labels()
@@ -304,9 +313,13 @@ class SettingsUi:
 
     def _button_set_debug_mode(self):
         match SETTINGS.debug_mode:
-            case None: SETTINGS.debug_mode = True
             case True: SETTINGS.debug_mode = False
             case False: SETTINGS.debug_mode = True
+        self._update_labels()
+        self._fill_window()
+
+    def _combo_set_driver(self, event):
+        SETTINGS.webdriver = DriverType(self._label.webdriver.get())
         self._update_labels()
         self._fill_window()
 
