@@ -42,7 +42,7 @@ def test_employee_pin(settings):
 
 
 def test_today_in_saldo(settings):
-    default_value = None
+    default_value = False
     test_value = True
     assert settings.today_in_saldo == default_value
     settings.today_in_saldo = test_value
@@ -50,7 +50,7 @@ def test_today_in_saldo(settings):
 
 
 def test_hours_per_day(settings):
-    default_value = None
+    default_value = 7.0
     test_value = 3.14
     assert settings.hours_per_day == default_value
     settings.hours_per_day = test_value
@@ -58,7 +58,7 @@ def test_hours_per_day(settings):
 
 
 def test_debug_mode(settings):
-    default_value = None
+    default_value = False
     test_value = True
     assert settings.debug_mode == default_value
     settings.debug_mode = test_value

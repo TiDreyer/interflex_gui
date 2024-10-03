@@ -308,7 +308,6 @@ class SettingsUi:
 
     def _button_today_in_saldo(self):
         match SETTINGS.today_in_saldo:
-            case None: SETTINGS.today_in_saldo = True
             case True: SETTINGS.today_in_saldo = False
             case False: SETTINGS.today_in_saldo = True
         self._update_labels()
@@ -316,7 +315,6 @@ class SettingsUi:
 
     def _button_set_debug_mode(self):
         match SETTINGS.debug_mode:
-            case None: SETTINGS.debug_mode = True
             case True: SETTINGS.debug_mode = False
             case False: SETTINGS.debug_mode = True
         self._update_labels()
