@@ -10,7 +10,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import wait, expected_conditions
 
-from work_clock.settings import SETTINGS
+from work_clock.settings import SETTINGS, DriverType
 from work_clock.time_evaluation import TimeBookingList, BookingTime
 
 
@@ -83,10 +83,24 @@ class SeleniumTimeBooker:
         return bookings
 
     async def _init_driver(self):
-        options = webdriver.EdgeOptions()
-        if not self.debug_mode:
-            options.add_argument('--headless=new')
-        self.driver = webdriver.Edge(options=options)
+        match SETTINGS.webdriver:
+            case DriverType.edge:
+                options = webdriver.EdgeOptions()
+                if not self.debug_mode:
+                    options.add_argument('--headless')
+                self.driver = webdriver.Edge(options=options)
+            case DriverType.firefox:
+                options = webdriver.FirefoxOptions()
+                if not self.debug_mode:
+                    options.add_argument('-headless')
+                self.driver = webdriver.Firefox(options=options)
+            case DriverType.chrome:
+                options = webdriver.ChromeOptions()
+                if not self.debug_mode:
+                    options.add_argument('--headless')
+                self.driver = webdriver.Chrome(options=options)
+            case _:
+                raise NotImplementedError(f"Webdriver '{SETTINGS.webdriver}' is not implemented")
 
     async def _login(self):
         logging.info("Logging in to the web interface")
