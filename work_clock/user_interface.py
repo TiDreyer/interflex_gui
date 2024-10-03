@@ -42,7 +42,6 @@ class TimeBookingUi:
 
     def _create_window(self):
         self.root = tk.Tk()
-        self.root.geometry('280x120')
         self.root.resizable(False, False)
         self.root.winfo_toplevel().title(APP_NAME + " " + APP_VERSION)
 
@@ -194,7 +193,6 @@ class SettingsUi:
 
     def _create_window(self):
         self.root = tk.Tk()
-        self.root.geometry('300x180')
         self.root.resizable(False, False)
         self.root.winfo_toplevel().title(APP_NAME + " Settings")
 
