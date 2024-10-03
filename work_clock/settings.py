@@ -1,9 +1,16 @@
+from enum import Enum
 import json
 from pathlib import Path
 from platform import system
 from typing import Optional
 
 from work_clock import APP_NAME_CODE
+
+
+class DriverType(Enum):
+    edge = 'Microsoft Edge'
+    firefox = 'Mozilla Firefox'
+    chrome = 'Google Chrome'
 
 
 class UserSettings:
@@ -14,6 +21,7 @@ class UserSettings:
         self._today_in_saldo: Optional[bool] = None
         self._hours_per_day: Optional[float] = None
         self._debug_mode: Optional[bool] = None
+        self._webdriver: Optional[str] = None
 
         self.load()
 
@@ -40,6 +48,7 @@ class UserSettings:
             'today_in_saldo': self._today_in_saldo,
             'hours_per_day': self._hours_per_day,
             'debug_mode': self._debug_mode,
+            'webdriver': self._webdriver,
         }
         settings_json = json.dumps(settings)
         with open(self.setting_file_path(), 'w') as settings_file:
@@ -56,6 +65,7 @@ class UserSettings:
         self._today_in_saldo = settings_json.get('today_in_saldo', None)
         self._hours_per_day = settings_json.get('hours_per_day', None)
         self._debug_mode = settings_json.get('debug_mode', None)
+        self._webdriver = settings_json.get('webdriver', None)
 
     @property
     def base_url(self) -> str:
@@ -111,6 +121,17 @@ class UserSettings:
     @debug_mode.setter
     def debug_mode(self, debug_mode: bool) -> None:
         self._debug_mode = debug_mode
+        self.save()
+
+    @property
+    def webdriver(self) -> Optional[DriverType]:
+        if self._webdriver is None:
+            return DriverType.edge
+        return DriverType(self._webdriver)
+
+    @webdriver.setter
+    def webdriver(self, webdriver: DriverType) -> None:
+        self._webdriver = str(webdriver.value)
         self.save()
 
 
