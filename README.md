@@ -7,6 +7,11 @@ This Version was tested with the Interflex WebClient in Version 1.87.
 ![Screenshot of version 0.4.0](misc/screenshot.png)
 
 
+**NOTE:**
+Since I don't have to use the Interflex WebClient anymore, I will not make any updates to this project.
+If it is useful to you, feel free to fork the repo.
+
+
 ## How does it work?
 
 On the first use, configure the Tool with your companies Interflex WebClient
